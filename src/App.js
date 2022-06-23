@@ -1,23 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import FilerobotImageEditor, {
+  TABS,
+  TOOLS,
+} from 'react-filerobot-image-editor';
 
 function App() {
+  const [isImgEditorShown, setIsImgEditorShown] = useState(false);
+  const [imageUrl, setImageUrl] = useState("")
+
+  const openImgEditor = (event) => {
+    setImageUrl(URL.createObjectURL(event.target.files[0]))
+    setIsImgEditorShown(true);
+  };
+
+  const closeImgEditor = () => {
+    setIsImgEditorShown(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ height: '80vh' }}>
+      <input
+          type="file"
+          onChange={(e) => openImgEditor(e)}
+        />
+      {/* <button onClick={openImgEditor}>Open Filerobot image editor</button> */}
+          {isImgEditorShown && (
+          <FilerobotImageEditor
+              source={imageUrl}
+              onSave={(editedImageObject, designState) => console.log('saved', editedImageObject, designState)}
+              onClose={closeImgEditor}
+              annotationsCommon={{
+                fill: '#ff0000'
+              }}
+              Text={{ text: 'Filerobot...' }}
+              tabsIds={[TABS.ADJUST, TABS.ANNOTATE, TABS.WATERMARK, TABS.FILTERS, TABS.FINETUNE, TABS.RESIZE]} // or {['Adjust', 'Annotate', 'Watermark']}
+              defaultTabId={TABS.ANNOTATE} // or 'Annotate'
+              defaultToolId={TOOLS.TEXT} // or 'Text'
+            />
+          )}
     </div>
   );
 }
